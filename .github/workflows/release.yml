@@ -32,7 +32,7 @@ jobs:
         run: npm run build
 
       - name: zip
-        run: zip -r release-artifact.zip ./index.html ./main.js
+        run: zip -r release-artifact.zip ./index.html ./main.js ./sample.wasm
 
       - name: release
         uses: softprops/action-gh-release@v1
