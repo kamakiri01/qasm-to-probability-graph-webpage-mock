@@ -21,7 +21,9 @@ jobs:
           
       - name: set-time
         id: set_time
-        run: echo "RELEASE_NAME=build ${{ github.run_id }} - $(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+        run: |
+          echo "RELEASE_NAME=build ${{ github.run_id }} - $(date +'%Y-%m-%d %H:%M:%S')" >> $GITHUB_ENV
+          echo "TAG_NAME=release-$(date +'%Y%m%d%H%M%S')-${{ github.run_id }}" >> $GITHUB_ENV
 
       - name: install
         run: npm install
@@ -29,13 +31,16 @@ jobs:
       - name: build
         run: npm run build
 
-      - name: upload
+      - name: zip
+        run: zip -r release-artifact.zip ./index.html ./main.js ./sample.qasm
+
+      - name: release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ env.TAG_NAME }}
           name: ${{ env.RELEASE_NAME }}
           body: |
           files: |
-            ./index.html
-            ./main.js
+            ./release-artifact.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
